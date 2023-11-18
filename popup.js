@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoader", function () {
+document.addEventListener("DOMContentLoaded", (event) => {
   // in that we going to target the element
   document
     .getElementById("accountList")
@@ -31,7 +31,6 @@ document.addEventListener("DOMContentLoader", function () {
   document.getElementById("login_up").addEventListener("click", login);
 
   document.getElementById("logout").addEventListener("click", logout);
-
   document
     .getElementById("open_Transfer")
     .addEventListener("click", openTransfer);
@@ -164,6 +163,7 @@ function createUser() {
 }
 
 function openCreate() {
+  console.log("openCreate");
   document.getElementById("createAccount").style.display = "none";
   document.getElementById("create_popUp").style.display = "block";
 }
@@ -278,12 +278,12 @@ function logout() {
 }
 
 function openTransfer() {
-  document.getElementById("transfer_from").style.display = "block";
+  document.getElementById("transfer_form").style.display = "block";
   document.getElementById("home").style.display = "none";
 }
 
 function goBack() {
-  document.getElementById("transfer_from").style.display = "none";
+  document.getElementById("transfer_form").style.display = "none";
   document.getElementById("home").style.display = "block";
 }
 
@@ -383,9 +383,10 @@ function addAccount() {
 }
 
 function myFunction() {
+  console.log(ethers);
   const str = localStorage.getItem("userWallet");
   const parsedObj = JSON.parse(str);
-  if (parsedObj.address) {
+  if (parsedObj && parsedObj.address) {
     document.getElementById("LoginUser").style.display = "none";
     document.getElementById("home").style.display = "block";
 
@@ -422,10 +423,9 @@ function myFunction() {
     });
 
   fetch("http://localhost:3000/api/v1/account/allaccount")
-    .then((resopnse) => response.json())
+    .then((response) => response.json())
     .then((data) => {
       let accounts = "";
-
       data.data.accounts.map(
         (account, i) =>
           (accounts += `

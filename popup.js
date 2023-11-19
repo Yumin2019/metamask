@@ -362,7 +362,7 @@ function addToken() {
 
 function addAccount() {
   const privateKey = document.getElementById("add_account_private_key").value;
-  const provider = new ehters.providers.JsonRpcProvider(providerURL);
+  const provider = new ethers.providers.JsonRpcProvider(providerURL);
 
   let wallet = new ethers.Wallet(privateKey, provider);
   console.log(wallet);

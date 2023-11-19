@@ -12,17 +12,20 @@ const signToken = (id) => {
 const createSendToken = (user, statusCode, req, res) => {
   const token = signToken(user._id);
 
-  res.cookie("jwt", token, {
-    expires: new Date(
-      Date.now() + process.env.JWT_JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
-    ),
-    httpOnly: true,
-    secure: req.secure || req.headers["x-forwared-poroto"] === "https",
-  });
+  try {
+    res.cookie("jwt", token, {
+      expires: new Date(
+        Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+      ),
+      httpOnly: true,
+      secure: req.secure || req.headers["x-forwarded-proto"] === "https",
+    });
+  } catch (error) {
+    console.log("error: ", error);
+  }
 
   // Remove password from output
   user.password = undefined;
-
   res.status(statusCode).json({
     status: "success",
     token,
@@ -33,16 +36,23 @@ const createSendToken = (user, statusCode, req, res) => {
 };
 
 exports.signUp = async (req, res, next) => {
-  const newUser = await User.create({
-    name: req.body.name,
-    email: req.body.email,
-    password: req.body.password,
-    passwordConfirm: req.body.passwordConfirm,
-    address: req.body.address,
-    private_key: req.body.private_key,
-    mnemonic: req.body.mnemonic,
-  });
-  createSendToken(newUser, 201, req, send);
+  console.log(req.body);
+
+  try {
+    const newUser = await User.create({
+      name: req.body.name,
+      email: req.body.email,
+      password: req.body.password,
+      passwordConfirm: req.body.passwordConfirm,
+      address: req.body.address,
+      private_key: req.body.private_key,
+      mnemonic: req.body.mnemonic,
+    });
+
+    createSendToken(newUser, 201, req, send);
+  } catch (error) {
+    console.log("error : ", error);
+  }
 };
 
 exports.login = async (req, res, next) => {
@@ -54,6 +64,7 @@ exports.login = async (req, res, next) => {
       status: "fail",
       message: "Please provide email and password!",
     });
+    return;
   }
 
   // 2. check if user exists and password is correct
@@ -64,6 +75,7 @@ exports.login = async (req, res, next) => {
       status: "fail",
       message: "Incorrect email or password",
     });
+    return;
   }
 
   // 3. if everything ok send token to client

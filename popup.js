@@ -39,6 +39,10 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
   document.getElementById("open_Import").addEventListener("click", openImport);
 
+  document
+    .getElementById("goBack_Import")
+    .addEventListener("click", importGoBack);
+
   document.getElementById("open_assets").addEventListener("click", openAssets);
 
   document
@@ -76,9 +80,9 @@ function handler() {
   const amount = document.getElementById("amount").value;
   const address = document.getElementById("address").value;
 
-  const privateKey =
-    "25a41e259b845d155311323330289be156125a16886ff75f4f6cf2ff53cdee37";
-  const testAccount = "0x8aDd53b91f178832620ac4e83b29f94bfD716bda";
+  // const privateKey =
+  //   "25a41e259b845d155311323330289be156125a16886ff75f4f6cf2ff53cdee37";
+  // const testAccount = "0x8aDd53b91f178832620ac4e83b29f94bfD716bda";
 
   // PROVIDER
   const provider = new ethers.providers.JsonRpcProvider(providerURL);
@@ -97,6 +101,7 @@ function handler() {
 
     document.getElementById("transfer_center").style.display = "none";
     const a = document.getElementById("link");
+    a.href = `https://mumbai.polygonscan.com/tx/${txObj.hash}`;
 
     document.getElementById("link").style.display = "block";
   });
@@ -106,7 +111,7 @@ function checkBalance(address) {
   const provider = new ethers.providers.JsonRpcProvider(providerURL);
 
   provider.getBalance(address).then((balance) => {
-    const balanceInEth = ehters.utils.formatEther(balance);
+    const balanceInEth = ethers.utils.formatEther(balance);
 
     document.getElementById(
       "accountBalance"
@@ -160,6 +165,8 @@ function loginUser() {
 function createUser() {
   document.getElementById("createAccount").style.display = "block";
   document.getElementById("LoginUser").style.display = "none";
+
+  console.log(document.getElementById("LoginUser"));
 }
 
 function openCreate() {
@@ -193,12 +200,12 @@ function signUp() {
       passwordConfirm: passwordConfirm,
       address: wallet.address,
       private_key: wallet.privateKey,
-      mnemonic: wallet.mnemoic.phrase,
+      mnemonic: wallet.mnemonic.phrase,
     };
 
     fetch(url, {
       method: "POST",
-      handlers: {
+      headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
@@ -249,7 +256,7 @@ function login() {
 
   fetch(url, {
     method: "POST",
-    handlers: {
+    headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
@@ -338,7 +345,7 @@ function addToken() {
 
   fetch(url, {
     method: "POST",
-    handlers: {
+    headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
@@ -368,7 +375,7 @@ function addAccount() {
 
   fetch(url, {
     method: "POST",
-    header: {
+    headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
@@ -386,7 +393,7 @@ function myFunction() {
   console.log(ethers);
   const str = localStorage.getItem("userWallet");
   const parsedObj = JSON.parse(str);
-  if (parsedObj && parsedObj.address) {
+  if (parsedObj?.address) {
     document.getElementById("LoginUser").style.display = "none";
     document.getElementById("home").style.display = "block";
 
@@ -403,7 +410,6 @@ function myFunction() {
     .then((response) => response.json())
     .then((data) => {
       let elements = "";
-
       data.data.tokens.map(
         (token) =>
           (elements += `

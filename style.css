@@ -103,6 +103,10 @@ body {
   margin-top: 1rem;
 }
 
+.import_account {
+  display: none;
+}
+
 .home h1,
 .home_tabs p,
 .assets_item span,

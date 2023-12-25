@@ -3,6 +3,10 @@
   "description": "Transfer funds to any wallet",
   "version": "1.0",
   "manifest_version": 3,
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
   "action": {
     "default_popup": "popup.html",
     "default_icon": "favicon.png"
@@ -13,5 +17,20 @@
     "48": "favicon.png",
     "128": "favicon.png"
   },
-  "permission": ["tabs", "bookmarks", "unlimitedStorage", "nativeMessaging"]
+  "permissions": ["storage"],
+  "externally_connectable": {
+    "matches": ["file://*/*", "http://*/*", "https://*/*"]
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://localhost/*",
+        "http://127.0.0.1:5500/*",
+        "https://piggle-dao.shop/*"
+      ],
+      "js": ["content-script.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ]
 }
